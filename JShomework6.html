@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+ 
+<head>
+    <style>
+        ul {
+            list-style-type: disc;
+        }
+ 
+        ul ul {
+            list-style-type: circle;
+        }
+ 
+        ul ul ul {
+            list-style-type: square;
+        }
+    </style>
+</head>
+ 
+<body>
+
+    <h1>Многоуровневый маркированный список</h1>
+    <div>
+
+        <input type="radio" name="action" value="add" id="add-radio">
+        <label for="add-radio">Добавить новый элемент в конец списка:</label>
+        <input type="text" id="add-text" value="Новый элемент">
+        <br>
+
+        <input type="radio" name="action" value="insert" id="insert-radio">
+        <label for="insert-radio">Вставить новый элемент списка в заданную позицию:</label>
+        <input type="text" id="insert-text" value="Новый элемент">
+        <br>
+
+        <input type="radio" name="action" value="change" id="change-radio">
+        <label for="change-radio">Изменить текст элемента списка:</label>
+        <input type="text" id="change-text" value="Новый текст">
+        <br>
+
+        <input type="radio" name="action" value="nested" id="nested-radio">
+        <label for="nested-radio">Добавить вложенный список:</label>
+        <input type="text" id="nested-text" value="Вложенный список">
+        <br>
+
+        <input type="radio" name="action" value="remove" id="remove-radio">
+        <label for="remove-radio">Удалить элемент списка</label>
+    </div>
+    <br>
+
+    <button onclick="addNewList()">Добавить новый список</button>
+    <hr>
+    <div id="list-container" onselectstart="return false;">
+
+        <ul id="root-list">
+            <li>
+
+                <span onclick="handleClick(event)">Элемент списка 1</span>
+            </li>
+        </ul>
+    </div>
+ 
+    <script>
+
+        function addNewList() {
+            const rootList = document.getElementById('root-list');
+            const newItem = document.createElement('li');
+            newItem.innerHTML = '<span onclick="handleClick(event)">Новый элемент списка</span>';
+            rootList.appendChild(newItem);
+        }
+ 
+
+        function handleClick(event) {
+
+            const action = document.querySelector('input[name="action"]:checked').value;
+
+            const text = getTextFromInput(action);
+ 
+            switch (action) {
+                case 'change':
+                    changeText(event.target, text);
+                    break;
+                case 'add':
+                    addNewElement(event.target, text);
+                    break;
+                case 'insert':
+                    insertNewItem(event.target, text);
+                    break;
+                case 'nested':
+                    addNestedList(event.target, text);
+                    break;
+                case 'remove':
+                    removeItem(event.target);
+                    break;
+            }
+        }
+ 
+        function getTextFromInput(action) {
+            switch (action) {
+                case 'change':
+                    return document.getElementById('change-text').value;
+                case 'add':
+                    return document.getElementById('add-text').value;
+                case 'insert':
+                    return document.getElementById('insert-text').value;
+                case 'nested':
+                    return document.getElementById('nested-text').value;
+                default:
+                    return '';
+            }
+        }
+ 
+        function changeText(target, text) {
+            target.textContent = text;
+        }
+ 
+        function addNewElement(target, text) {
+            const rootList = document.getElementById('root-list');
+            const newItem = document.createElement('li');
+            newItem.innerHTML = '<span onclick="handleClick(event)">' + text + '</span>';
+            rootList.appendChild(newItem);
+        }
+ 
+        function insertNewItem(target, text) {
+            const newItem = document.createElement('li');
+            newItem.innerHTML = '<span onclick="handleClick(event)">' + text + '</span>';
+            target.parentNode.parentNode.insertBefore(newItem, target.parentNode);
+        }
+ 
+        function addNestedList(target, text) {
+            if (target.parentNode.querySelector('ul')) {
+                alert('Невозможно создать вложенный список для элемента, который уже имеет дочерний список.');
+                return;
+            }
+ 
+            const nestedList = document.createElement('ul');
+            const newItem = document.createElement('li');
+            newItem.innerHTML = '<span onclick="handleClick(event)">' + text + '</span>';
+            nestedList.appendChild(newItem);
+            target.parentNode.appendChild(nestedList);
+        }
+ 
+        function removeItem(target) {
+            const parentList = target.parentNode.parentNode;
+            parentList.removeChild(target.parentNode);
+        }
+    </script>
+</body>
+ 
+</html>
